@@ -26,11 +26,13 @@ async def download_range(offset, length, mrd):
 
 
 async def init_aaow(
-    grpc_client, bucket_name, object_name, generation=None, flush_interval_bytes=None
+    grpc_client, bucket_name, object_name, generation=None, flush_interval_bytes=None, mode=None
 ):
     """
     Creates and opens the AsyncAppendableObjectWriter.
     """
+    if mode is not None and "x" in mode and generation is None:
+        generation = 0
     writer_options = {}
     # Only pass flush_interval_bytes if the user explicitly provided a
     # non-default flush interval.
