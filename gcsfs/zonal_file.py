@@ -146,6 +146,7 @@ class ZonalFile(GCSFile):
             object_name,
             generation,
             flush_interval_bytes,
+            self.mode,
         )
 
     def _fetch_range(self, start=None, end=None, chunk_lengths=None):
