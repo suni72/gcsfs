@@ -197,6 +197,7 @@ class ZonalFile(GCSFile):
         # unnecessary object creation for files that are opened but never written to.
         self._ensure_aaow()
         asyn.sync(self.gcsfs.loop, self.aaow.append, data)
+        self.loc += len(data)
         return len(data)
 
     def flush(self, force=False):
