@@ -198,7 +198,7 @@ class ZonalFile(GCSFile):
         self._ensure_aaow()
         asyn.sync(self.gcsfs.loop, self.aaow.append, data)
         self.loc += len(data)
-        # return len(data)
+        return len(data)
 
     def flush(self, force=False):
         """
