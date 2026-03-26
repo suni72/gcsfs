@@ -230,6 +230,7 @@ class ExtendedGcsFileSystem(GCSFileSystem):
             if effective_end > size:
                 length = max(0, size - offset)  # Clamp and ensure non-negative
 
+        logger.debug(f"Processed limits for {size}: start={start}, end={end}, offset={offset}, length={length}" )
         return offset, length
 
     sync_process_limits_to_offset_and_length = asyn.sync_wrapper(
@@ -251,7 +252,7 @@ class ExtendedGcsFileSystem(GCSFileSystem):
         'chunk_lengths' (chunks) concurrently in a single batch request, significantly
         improving performance for ReadAheadV2.
         """
-
+        logger.debug(f"_fetch_range_split called with start={start}, chunk_lengths={chunk_lengths}, size={size}")
         bucket, object_name, generation = self.split_path(path)
         mrd_created = False
         try:
@@ -277,6 +278,7 @@ class ExtendedGcsFileSystem(GCSFileSystem):
                 file_size = (await self._info(path))["size"]
 
             if chunk_lengths:
+                logger.debug("Chunk lengths is positive: %s", chunk_lengths)
                 start_offset = start if start is not None else 0
                 current_offset = start_offset
 
@@ -292,13 +294,16 @@ class ExtendedGcsFileSystem(GCSFileSystem):
                     read_ranges.append((current_offset, length))
                     current_offset += length
 
+                logger.debug("download ranges is called")
                 return await zb_hns_utils.download_ranges(read_ranges, mrd)
             else:
+                logger.debug("Chunk lengths is None or zero.")
                 end = kwargs.get("end")
                 offset, length = await self._process_limits_to_offset_and_length(
                     path, start, end, file_size
                 )
 
+                logger.debug("download range is called")
                 data = await zb_hns_utils.download_range(
                     offset=offset, length=length, mrd=mrd
                 )
