@@ -106,7 +106,8 @@ class ZonalFile(GCSFile):
             size=object_size,
             **kwargs,
         )
-        logger.debug(f"Cache type for filename {self.path} is {self.cache_type}")
+        cache_name = getattr(getattr(self, "cache", None), "name", cache_type)
+        logger.debug(f"Cache type for filename {self.path} is {cache_name}")
 
     async def _init_mrd(self, bucket_name, object_name, generation=None):
         """
