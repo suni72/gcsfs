@@ -28,7 +28,7 @@ class ZonalFile(GCSFile):
         mode="rb",
         block_size=DEFAULT_BLOCK_SIZE,
         autocommit=True,
-        cache_type="readahead_chunked",
+        cache_type=None,
         cache_options=None,
         acl=None,
         consistency="md5",
@@ -106,6 +106,7 @@ class ZonalFile(GCSFile):
             size=object_size,
             **kwargs,
         )
+        logger.debug(f"Cache type for filename {self.path} is {self.cache_type}")
 
     async def _init_mrd(self, bucket_name, object_name, generation=None):
         """
