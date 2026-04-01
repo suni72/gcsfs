@@ -1,6 +1,8 @@
 import asyncio
 import logging
 import os
+import time
+import threading
 import uuid
 from enum import Enum
 from glob import has_magic
@@ -51,6 +53,7 @@ class ExtendedGcsFileSystem(GCSFileSystem):
     """
 
     def __init__(self, *args, finalize_on_close=False, **kwargs):
+        t0 = time.time()
         super().__init__(*args, **kwargs)
         # By default, files in zonal buckets are left unfinalized to allow appends.
         self.finalize_on_close = finalize_on_close
@@ -67,6 +70,7 @@ class ExtendedGcsFileSystem(GCSFileSystem):
         if self.credentials.token == "anon":
             self.credential = AnonymousCredentials()
         self._storage_layout_cache = {}
+        logger.debug(f"ExtendedGcsFileSystem initialization took {time.time() - t0:.4f} seconds [PID: {os.getpid()}, TID: {threading.get_ident()}]")
 
     @property
     def grpc_client(self):
