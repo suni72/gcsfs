@@ -1199,7 +1199,7 @@ class ExtendedGcsFileSystem(GCSFileSystem):
             )
         await self._get_grpc_client()
         # Works for both 'overwrite' and 'create' modes
-        writer = await zb_hns_utils.init_aaow(self.grpc_client, bucket, key)
+        writer = await zb_hns_utils.init_aaow(self.grpc_client, bucket, key, mode=mode)
 
         try:
             with open(lpath, "rb") as f:
@@ -1272,7 +1272,7 @@ class ExtendedGcsFileSystem(GCSFileSystem):
             )
         await self._get_grpc_client()
         # Works for both 'overwrite' and 'create' modes
-        writer = await zb_hns_utils.init_aaow(self.grpc_client, bucket, key)
+        writer = await zb_hns_utils.init_aaow(self.grpc_client, bucket, key, mode=mode)
         try:
             for i in range(0, len(data), chunksize):
                 await writer.append(data[i : i + chunksize])
@@ -1539,7 +1539,7 @@ async def initiate_upload(
     await fs._get_grpc_client()
     # If generation is not passed to init_aaow, it creates a new object and overwrites if object already exists.
     # Hence it works for both 'overwrite' and 'create' modes.
-    return await zb_hns_utils.init_aaow(fs.grpc_client, bucket, key)
+    return await zb_hns_utils.init_aaow(fs.grpc_client, bucket, key, mode=mode)
 
 
 async def simple_upload(
@@ -1614,7 +1614,7 @@ async def simple_upload(
     await fs._get_grpc_client()
     # If generation is not passed to init_aaow, it creates a new object and overwrites if object already exists.
     # Hence it works for both 'overwrite' and 'create' modes.
-    writer = await zb_hns_utils.init_aaow(fs.grpc_client, bucket, key)
+    writer = await zb_hns_utils.init_aaow(fs.grpc_client, bucket, key, mode=mode)
     try:
         await writer.append(datain)
     finally:

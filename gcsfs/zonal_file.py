@@ -140,6 +140,7 @@ class ZonalFile(GCSFile):
             object_name,
             generation,
             flush_interval_bytes,
+            self.mode,
         )
 
     def _ensure_aaow(self):
